@@ -46,15 +46,6 @@ btnScrollTo.addEventListener('click', function (e) {
 });
 /////////// Page Navigation ///////////
 
-/*document.querySelectorAll('.nav__link').forEach(function (el) {
-  el.addEventListener('click', function (e) {
-    e.preventDefault();
-    const id = this.getAttribute('href');
-    console.log(id);
-    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-  });
-});
-*/
 //1. Add event listener to common parent element
 //2.Determine what element originated the event
 
@@ -72,12 +63,6 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
 
 //////////////////////////
 // Tabbed Component
-
-/*tabs.forEach(t =>
-  t.addEventListener('click', () => {
-    console.log('Tab');
-  })
-);*/
 
 tabsContainer.addEventListener('click', function (e) {
   const clicked = e.target.closest('.operations__tab');
@@ -116,34 +101,36 @@ nav.addEventListener('mouseout', function (e) {
   handleHover(e, 1);
 });
 
-/////////////////
-///////////
-/////////
-////////
-////////
-//
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  console.log(entry);
 
-// console.log(document.head);
-// console.log(document.body);
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);
 
-// document.querySelector('.header');
-// const allSections = document.querySelectorAll('.section');
-// console.log(allSections);
-
-// const btnScrollTo = document.querySelector('.btn--scroll-to');
-// const section1 = document.querySelector('#section--1');
-
-// btnScrollTo.addEventListener('click', function (e) {
-//   const s1coords = section1.getBoundingClientRect();
-//   console.log(s1coords);
-
-//   console.log(e.target.getBoundingClientRect());
-//   console.log('Current Scroll X/Y', window.scrollX, scrollY);
-//   //scrolling
-
-//   section1.scrollIntoView({ behavior: 'smooth' });
-//   const h1 = document.querySelector('.h1');
-//   const alerth1 = function (e) {
-//     alert('addEventListener: Great you are reading a heading..');
-//     h1.removeEventListener('mouseenter', alerth1);
-//   };
+// Reveal Sections
+const allSections = document.querySelectorAll('.section');
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+  console.log(entry);
+  if (!entry.isIntersecting) return;
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
+});
